@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import { Check, ChevronDown, ChevronUp } from 'lucide-react-native';
 import type { Scheme } from '@/mock/schemes';
 
 interface SchemeCardProps {
@@ -50,7 +51,8 @@ export function SchemeCard({ scheme, onPress }: SchemeCardProps) {
       <View style={styles.benefitsRow}>
         {scheme.benefits.slice(0, 2).map((b, i) => (
           <View key={i} style={styles.benefitChip}>
-            <Text style={styles.benefitText}>✓ {b}</Text>
+            <Check size={12} color={Colors.primarySage} strokeWidth={2.5} />
+            <Text style={styles.benefitText}>{b}</Text>
           </View>
         ))}
       </View>
@@ -64,14 +66,27 @@ export function SchemeCard({ scheme, onPress }: SchemeCardProps) {
           ))}
           <Text style={[styles.sectionLabel, { marginTop: Spacing.sm }]}>All Benefits</Text>
           {scheme.benefits.map((b, i) => (
-            <Text key={i} style={styles.bulletItem}>✓ {b}</Text>
+            <View key={i} style={styles.benefitListItem}>
+              <Check size={12} color={Colors.primarySage} strokeWidth={2.5} style={{ marginTop: 4 }} />
+              <Text style={styles.bulletItemText}>{b}</Text>
+            </View>
           ))}
           <Text style={styles.ministry}>{scheme.ministry}</Text>
         </View>
       )}
 
-      <TouchableOpacity style={styles.viewBtn} onPress={() => setExpanded(!expanded)} activeOpacity={0.75}>
-        <Text style={styles.viewBtnText}>{expanded ? 'Show Less ↑' : 'View Details →'}</Text>
+      <TouchableOpacity
+        style={styles.viewBtn}
+        onPress={() => setExpanded(!expanded)}
+        activeOpacity={0.75}
+        accessibilityRole="button"
+      >
+        <Text style={styles.viewBtnText}>{expanded ? 'Show Less' : 'View Details'}</Text>
+        {expanded ? (
+          <ChevronUp size={14} color={Colors.primarySage} strokeWidth={2.5} />
+        ) : (
+          <ChevronDown size={14} color={Colors.primarySage} strokeWidth={2.5} />
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -83,6 +98,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
   },
   header: {
@@ -130,9 +147,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   benefitChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
     backgroundColor: Colors.cream,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: Radius.pill,
   },
   benefitText: {
@@ -158,6 +178,18 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     marginBottom: 2,
   },
+  benefitListItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 6,
+    marginBottom: 4,
+  },
+  bulletItemText: {
+    fontSize: Typography.sm,
+    color: Colors.textSecondary,
+    lineHeight: 20,
+    flex: 1,
+  },
   ministry: {
     fontSize: Typography.xs,
     color: Colors.textSecondary,
@@ -165,7 +197,11 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   viewBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     alignSelf: 'flex-start',
+    paddingVertical: 4,
   },
   viewBtnText: {
     fontSize: Typography.sm,

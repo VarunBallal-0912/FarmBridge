@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import { Search, Sparkles, ShieldCheck, AlertCircle } from 'lucide-react-native';
 
 export interface DiseaseResult {
   diseaseName: string;
@@ -15,7 +16,12 @@ interface DiseaseResultCardProps {
 }
 
 export function DiseaseResultCard({ result }: DiseaseResultCardProps) {
-  const confidenceColor = result.confidence >= 80 ? Colors.priceUp : result.confidence >= 60 ? '#E65100' : Colors.priceDown;
+  const confidenceColor =
+    result.confidence >= 80
+      ? Colors.priceUp
+      : result.confidence >= 60
+      ? '#E65100'
+      : Colors.priceDown;
 
   return (
     <View style={styles.card}>
@@ -31,7 +37,9 @@ export function DiseaseResultCard({ result }: DiseaseResultCardProps) {
           <Text style={styles.diseaseName}>{result.diseaseName}</Text>
         </View>
         <View style={[styles.confidenceBadge, { borderColor: confidenceColor }]}>
-          <Text style={[styles.confidenceNumber, { color: confidenceColor }]}>{result.confidence}%</Text>
+          <Text style={[styles.confidenceNumber, { color: confidenceColor }]}>
+            {result.confidence}%
+          </Text>
           <Text style={styles.confidenceLabel}>confidence</Text>
         </View>
       </View>
@@ -39,7 +47,7 @@ export function DiseaseResultCard({ result }: DiseaseResultCardProps) {
       {/* Symptoms */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionIcon}>🔍</Text>
+          <Search size={16} color={Colors.primarySage} strokeWidth={2} />
           <Text style={styles.sectionTitle}>Symptoms</Text>
         </View>
         {result.symptoms.map((s, i) => (
@@ -50,7 +58,7 @@ export function DiseaseResultCard({ result }: DiseaseResultCardProps) {
       {/* Treatment */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionIcon}>💊</Text>
+          <Sparkles size={16} color={Colors.primarySage} strokeWidth={2} />
           <Text style={styles.sectionTitle}>Treatment</Text>
         </View>
         {result.treatment.map((t, i) => (
@@ -61,7 +69,7 @@ export function DiseaseResultCard({ result }: DiseaseResultCardProps) {
       {/* Prevention */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionIcon}>🛡️</Text>
+          <ShieldCheck size={16} color={Colors.primarySage} strokeWidth={2} />
           <Text style={styles.sectionTitle}>Prevention</Text>
         </View>
         {result.prevention.map((p, i) => (
@@ -69,9 +77,12 @@ export function DiseaseResultCard({ result }: DiseaseResultCardProps) {
         ))}
       </View>
 
-      <Text style={styles.disclaimer}>
-        ⚠️ This is a demo result. Consult your local agronomist for accurate diagnosis.
-      </Text>
+      <View style={styles.disclaimerRow}>
+        <AlertCircle size={14} color={Colors.textSecondary} strokeWidth={2} style={{ marginTop: 2 }} />
+        <Text style={styles.disclaimer}>
+          This is an AI demo result. Consult your local agronomist or Krishi Vigyan Kendra for certified diagnosis.
+        </Text>
+      </View>
     </View>
   );
 }
@@ -81,6 +92,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Radius.lg,
     padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
   },
   demoTag: {
@@ -143,11 +156,8 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     marginBottom: 6,
-  },
-  sectionIcon: {
-    fontSize: 16,
   },
   sectionTitle: {
     fontSize: Typography.base,
@@ -161,14 +171,20 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     paddingLeft: 4,
   },
-  disclaimer: {
-    fontSize: Typography.xs,
-    color: Colors.textSecondary,
-    fontStyle: 'italic',
+  disclaimerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 6,
     marginTop: Spacing.sm,
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: Colors.borderLight,
+  },
+  disclaimer: {
+    fontSize: Typography.xs,
+    color: Colors.textSecondary,
+    fontStyle: 'italic',
     lineHeight: 18,
+    flex: 1,
   },
 });

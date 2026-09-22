@@ -1,22 +1,35 @@
 import React from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Typography, Spacing, Radius } from '@/constants/theme';
+import type { LucideIcon } from 'lucide-react-native';
 
 interface FilterChipProps {
   label: string;
   selected?: boolean;
   onPress?: () => void;
-  icon?: string;
+  icon?: LucideIcon | string;
 }
 
 export function FilterChip({ label, selected = false, onPress, icon }: FilterChipProps) {
+  const isLucideIcon = typeof icon !== 'string' && icon !== undefined;
+  const IconComponent = isLucideIcon ? icon : null;
+
   return (
     <TouchableOpacity
       style={[styles.chip, selected && styles.chipSelected]}
       onPress={onPress}
       activeOpacity={0.75}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
     >
-      {icon && <Text style={styles.icon}>{icon}</Text>}
+      {IconComponent && (
+        <IconComponent
+          size={16}
+          color={selected ? Colors.white : Colors.textSecondary}
+          strokeWidth={2}
+        />
+      )}
+      {typeof icon === 'string' && <Text style={styles.icon}>{icon}</Text>}
       <Text
         style={[styles.label, selected && styles.labelSelected]}
         numberOfLines={1}

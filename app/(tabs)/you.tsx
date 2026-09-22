@@ -9,14 +9,30 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import { StatusBadge } from '@/components/ui/States';
+import {
+  User,
+  MapPin,
+  Sprout,
+  Bookmark,
+  Store,
+  Search,
+  Bell,
+  Settings,
+  ChevronRight,
+  BarChart3,
+  Landmark,
+  ShieldAlert,
+  CheckCircle2,
+} from 'lucide-react-native';
 
 const MENU_ITEMS = [
-  { icon: '🌾', label: 'My Crops', subtitle: 'Manage your crop list', route: null },
-  { icon: '📌', label: 'Saved Prices', subtitle: 'Prices you are tracking', route: null },
-  { icon: '🏪', label: 'Saved Mandis', subtitle: 'Your favourite mandis', route: null },
-  { icon: '🔍', label: 'My Searches', subtitle: 'Recent searches', route: null },
-  { icon: '🔔', label: 'Notifications', subtitle: 'Price alerts and updates', route: null },
-  { icon: '⚙️', label: 'Settings', subtitle: 'Language, location, preferences', route: null },
+  { icon: Sprout, label: 'My Crops', subtitle: 'Manage your crop list', route: null },
+  { icon: Bookmark, label: 'Saved Prices', subtitle: 'Prices you are tracking', route: null },
+  { icon: Store, label: 'Saved Mandis', subtitle: 'Your favourite mandis', route: null },
+  { icon: Search, label: 'My Searches', subtitle: 'Recent searches and history', route: null },
+  { icon: Bell, label: 'Notifications', subtitle: 'Price alerts and updates', route: null },
+  { icon: Settings, label: 'Settings', subtitle: 'Language, location, preferences', route: null },
 ];
 
 export default function YouScreen() {
@@ -28,16 +44,19 @@ export default function YouScreen() {
         {/* Profile Card */}
         <View style={styles.profileCard}>
           <View style={styles.avatarLarge}>
-            <Text style={styles.avatarEmoji}>👨‍🌾</Text>
+            <User size={30} color={Colors.white} strokeWidth={2} />
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>Ramesh Patil</Text>
-            <Text style={styles.profileLocation}>📍 Pune, Maharashtra</Text>
-            <View style={styles.profileBadge}>
-              <Text style={styles.profileBadgeText}>Verified Farmer</Text>
+            <View style={styles.locationRow}>
+              <MapPin size={13} color={Colors.textSecondary} strokeWidth={2} />
+              <Text style={styles.profileLocation}>Pune, Maharashtra</Text>
+            </View>
+            <View style={{ marginTop: 6 }}>
+              <StatusBadge label="Verified Farmer" variant="success" icon={CheckCircle2} />
             </View>
           </View>
-          <TouchableOpacity style={styles.editBtn}>
+          <TouchableOpacity style={styles.editBtn} activeOpacity={0.8}>
             <Text style={styles.editBtnText}>Edit</Text>
           </TouchableOpacity>
         </View>
@@ -62,21 +81,24 @@ export default function YouScreen() {
 
         {/* Menu */}
         <View style={styles.menuCard}>
-          {MENU_ITEMS.map((item, index) => (
-            <React.Fragment key={item.label}>
-              <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
-                <View style={styles.menuIconContainer}>
-                  <Text style={styles.menuIcon}>{item.icon}</Text>
-                </View>
-                <View style={styles.menuText}>
-                  <Text style={styles.menuLabel}>{item.label}</Text>
-                  <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
-                </View>
-                <Text style={styles.menuArrow}>›</Text>
-              </TouchableOpacity>
-              {index < MENU_ITEMS.length - 1 && <View style={styles.menuDivider} />}
-            </React.Fragment>
-          ))}
+          {MENU_ITEMS.map((item, index) => {
+            const IconComponent = item.icon;
+            return (
+              <React.Fragment key={item.label}>
+                <TouchableOpacity style={styles.menuItem} activeOpacity={0.7}>
+                  <View style={styles.menuIconContainer}>
+                    <IconComponent size={18} color={Colors.primarySage} strokeWidth={2} />
+                  </View>
+                  <View style={styles.menuText}>
+                    <Text style={styles.menuLabel}>{item.label}</Text>
+                    <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
+                  </View>
+                  <ChevronRight size={18} color={Colors.textMuted} strokeWidth={2} />
+                </TouchableOpacity>
+                {index < MENU_ITEMS.length - 1 && <View style={styles.menuDivider} />}
+              </React.Fragment>
+            );
+          })}
         </View>
 
         {/* Quick shortcuts */}
@@ -88,7 +110,9 @@ export default function YouScreen() {
               onPress={() => router.push('/compare')}
               activeOpacity={0.8}
             >
-              <Text style={styles.shortcutEmoji}>📊</Text>
+              <View style={[styles.shortcutIconWrap, { backgroundColor: '#E8F0FE' }]}>
+                <BarChart3 size={20} color="#1A73E8" strokeWidth={2} />
+              </View>
               <Text style={styles.shortcutLabel}>Compare Prices</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -96,7 +120,9 @@ export default function YouScreen() {
               onPress={() => router.push('/schemes')}
               activeOpacity={0.8}
             >
-              <Text style={styles.shortcutEmoji}>🏛️</Text>
+              <View style={[styles.shortcutIconWrap, { backgroundColor: '#FEF7E0' }]}>
+                <Landmark size={20} color="#E37400" strokeWidth={2} />
+              </View>
               <Text style={styles.shortcutLabel}>Schemes</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -104,7 +130,9 @@ export default function YouScreen() {
               onPress={() => router.push('/disease')}
               activeOpacity={0.8}
             >
-              <Text style={styles.shortcutEmoji}>🌿</Text>
+              <View style={[styles.shortcutIconWrap, { backgroundColor: '#E6F4EA' }]}>
+                <ShieldAlert size={20} color="#137333" strokeWidth={2} />
+              </View>
               <Text style={styles.shortcutLabel}>Disease Check</Text>
             </TouchableOpacity>
           </View>
@@ -133,41 +161,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 14,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
     marginBottom: Spacing.md,
   },
   avatarLarge: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: Colors.lightGreen,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colors.primarySage,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarEmoji: { fontSize: 34 },
   profileInfo: { flex: 1 },
   profileName: {
     fontSize: Typography.lg,
     fontWeight: Typography.bold,
     color: Colors.textPrimary,
   },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 3,
+  },
   profileLocation: {
     fontSize: Typography.sm,
     color: Colors.textSecondary,
-    marginTop: 3,
-  },
-  profileBadge: {
-    marginTop: 6,
-    alignSelf: 'flex-start',
-    backgroundColor: Colors.lightGreen + '40',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: Radius.pill,
-  },
-  profileBadgeText: {
-    fontSize: Typography.xs,
-    color: Colors.primarySage,
-    fontWeight: Typography.semibold,
   },
   editBtn: {
     backgroundColor: Colors.screenBg,
@@ -187,6 +208,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     padding: Spacing.base,
     flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
     marginBottom: Spacing.lg,
   },
@@ -210,6 +233,8 @@ const styles = StyleSheet.create({
   menuCard: {
     backgroundColor: Colors.white,
     borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
     marginBottom: Spacing.lg,
     overflow: 'hidden',
@@ -224,11 +249,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.md,
-    backgroundColor: Colors.screenBg,
+    backgroundColor: Colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  menuIcon: { fontSize: 20 },
   menuText: { flex: 1 },
   menuLabel: {
     fontSize: Typography.base,
@@ -239,11 +263,6 @@ const styles = StyleSheet.create({
     fontSize: Typography.xs,
     color: Colors.textSecondary,
     marginTop: 2,
-  },
-  menuArrow: {
-    fontSize: 22,
-    color: Colors.textSecondary,
-    fontWeight: Typography.regular,
   },
   menuDivider: {
     height: 1,
@@ -267,10 +286,19 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     padding: Spacing.md,
     alignItems: 'center',
-    gap: 6,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
   },
-  shortcutEmoji: { fontSize: 24 },
+  shortcutIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 2,
+  },
   shortcutLabel: {
     fontSize: Typography.xs,
     color: Colors.textSecondary,

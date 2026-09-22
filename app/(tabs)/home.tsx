@@ -6,8 +6,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  FlatList,
-  StatusBar,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
@@ -16,21 +14,36 @@ import { PriceCard } from '@/components/ui/PriceCard';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { QuickActionCard } from '@/components/ui/QuickActionCard';
 import { TODAY_PRICES } from '@/mock/prices';
+import {
+  User,
+  Bell,
+  MapPin,
+  TrendingUp,
+  ArrowRight,
+  Bot,
+  ShieldAlert,
+  Landmark,
+  BarChart3,
+} from 'lucide-react-native';
 
-const QUICK_SEARCHES = ['Onion 🧅', 'Tomato 🍅', 'Wheat 🌾', 'Potato 🥔'];
+const QUICK_SEARCHES = ['Onion', 'Tomato', 'Wheat', 'Potato'];
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPrices = searchQuery
-    ? TODAY_PRICES.filter(p =>
-        p.cropName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.mandiName.toLowerCase().includes(searchQuery.toLowerCase())
+    ? TODAY_PRICES.filter(
+        p =>
+          p.cropName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          p.mandiName.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : TODAY_PRICES;
 
   function handlePriceCardPress(item: typeof TODAY_PRICES[0]) {
-    router.push({ pathname: '/crop-details', params: { cropId: item.cropId, cropName: item.cropName } });
+    router.push({
+      pathname: '/crop-details',
+      params: { cropId: item.cropId, cropName: item.cropName },
+    });
   }
 
   return (
@@ -45,15 +58,22 @@ export default function HomeScreen() {
         <View style={styles.topBar}>
           <View style={styles.greetingSection}>
             <View style={styles.avatarCircle}>
-              <Text style={styles.avatarText}>👨‍🌾</Text>
+              <User size={22} color={Colors.primarySage} strokeWidth={2} />
             </View>
             <View>
-              <Text style={styles.greeting}>Namaskar, Farmer 👋</Text>
-              <Text style={styles.greetingSub}>Pune, Maharashtra · Today</Text>
+              <Text style={styles.greeting}>Namaskar, Farmer</Text>
+              <View style={styles.locationRow}>
+                <MapPin size={12} color={Colors.textSecondary} strokeWidth={2} />
+                <Text style={styles.greetingSub}>Pune, Maharashtra · Today</Text>
+              </View>
             </View>
           </View>
-          <TouchableOpacity style={styles.notifBtn}>
-            <Text style={styles.notifIcon}>🔔</Text>
+          <TouchableOpacity
+            style={styles.notifBtn}
+            accessibilityLabel="Notifications"
+            activeOpacity={0.75}
+          >
+            <Bell size={20} color={Colors.textPrimary} strokeWidth={2} />
           </TouchableOpacity>
         </View>
 
@@ -65,14 +85,20 @@ export default function HomeScreen() {
             placeholder="Search crop or mandi..."
           />
           {/* Quick search chips */}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.quickSearchRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.quickSearchRow}
+            contentContainerStyle={{ gap: Spacing.sm }}
+          >
             {QUICK_SEARCHES.map(q => (
               <TouchableOpacity
                 key={q}
                 style={styles.quickChip}
-                onPress={() => setSearchQuery(q.split(' ')[0])}
+                onPress={() => setSearchQuery(q)}
                 activeOpacity={0.75}
               >
+                <TrendingUp size={12} color={Colors.primarySage} strokeWidth={2} />
                 <Text style={styles.quickChipText}>{q}</Text>
               </TouchableOpacity>
             ))}
@@ -83,7 +109,7 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <SectionHeader
             title="Today's Market Prices"
-            subtitle="Live mandi prices · Pune"
+            subtitle="Live mandi prices · Pune APMC"
             actionLabel="See All"
             onAction={() => router.push('/(tabs)/prices')}
           />
@@ -101,13 +127,14 @@ export default function HomeScreen() {
           style={styles.compareCta}
           onPress={() => router.push('/compare')}
           activeOpacity={0.85}
+          accessibilityRole="button"
         >
-          <View>
+          <View style={styles.compareCtaLeft}>
             <Text style={styles.compareCtaLabel}>Compare Mandi Prices</Text>
             <Text style={styles.compareCtaSub}>Find where your crop gets the best price</Text>
           </View>
           <View style={styles.compareArrow}>
-            <Text style={styles.compareArrowText}>→</Text>
+            <ArrowRight size={20} color={Colors.white} strokeWidth={2.5} />
           </View>
         </TouchableOpacity>
 
@@ -117,34 +144,34 @@ export default function HomeScreen() {
           <View style={styles.quickActionsGrid}>
             <View style={styles.quickActionsRow}>
               <QuickActionCard
-                icon="🤖"
+                icon={Bot}
                 title="Kisan AI"
-                subtitle="Ask anything about farming"
+                subtitle="Ask anything about farming & crops"
                 onPress={() => router.push('/(tabs)/ai')}
                 accentColor={Colors.primarySage}
               />
               <View style={styles.quickActionSpacer} />
               <QuickActionCard
-                icon="🌿"
+                icon={ShieldAlert}
                 title="Crop Disease"
-                subtitle="Identify crop diseases"
+                subtitle="Scan & identify plant diseases"
                 onPress={() => router.push('/disease')}
-                accentColor={Colors.lightGreen}
+                accentColor={Colors.priceUp}
               />
             </View>
             <View style={[styles.quickActionsRow, { marginTop: Spacing.sm }]}>
               <QuickActionCard
-                icon="🏛️"
+                icon={Landmark}
                 title="Govt. Schemes"
-                subtitle="Find schemes you may be eligible for"
+                subtitle="Explore eligible farmer subsidies"
                 onPress={() => router.push('/schemes')}
-                accentColor={Colors.warmBeige}
+                accentColor="#B27A38"
               />
               <View style={styles.quickActionSpacer} />
               <QuickActionCard
-                icon="📊"
+                icon={BarChart3}
                 title="Market Prices"
-                subtitle="All crop prices today"
+                subtitle="All daily crop rates and mandis"
                 onPress={() => router.push('/(tabs)/prices')}
                 accentColor={Colors.primarySage}
               />
@@ -169,7 +196,6 @@ export default function HomeScreen() {
           ))}
         </View>
 
-        {/* Bottom padding */}
         <View style={{ height: 24 }} />
       </ScrollView>
     </SafeAreaView>
@@ -200,25 +226,29 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   avatarCircle: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: Colors.lightGreen,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.surfaceMuted,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 24,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
   greeting: {
     fontSize: Typography.md,
     fontWeight: Typography.bold,
     color: Colors.textPrimary,
   },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 2,
+  },
   greetingSub: {
     fontSize: Typography.xs,
     color: Colors.textSecondary,
-    marginTop: 2,
   },
   notifBtn: {
     width: 42,
@@ -227,10 +257,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
-  },
-  notifIcon: {
-    fontSize: 20,
   },
   searchSection: {
     marginBottom: Spacing.lg,
@@ -240,14 +269,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   quickChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: Colors.white,
     borderRadius: Radius.pill,
-    paddingHorizontal: Spacing.base,
-    height: 38,
-    minHeight: 38,
+    paddingHorizontal: 14,
+    height: 36,
+    minHeight: 36,
     justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.border,
   },
@@ -271,6 +301,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     ...Shadow.card,
   },
+  compareCtaLeft: {
+    flex: 1,
+  },
   compareCtaLabel: {
     fontSize: Typography.md,
     fontWeight: Typography.bold,
@@ -279,20 +312,15 @@ const styles = StyleSheet.create({
   },
   compareCtaSub: {
     fontSize: Typography.sm,
-    color: 'rgba(255,255,255,0.82)',
+    color: 'rgba(255,255,255,0.85)',
   },
   compareArrow: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  compareArrowText: {
-    fontSize: 20,
-    color: Colors.white,
-    fontWeight: Typography.bold,
   },
   quickActionsGrid: {
     gap: 0,

@@ -5,23 +5,31 @@ import {
   FlatList,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors, Typography, Spacing } from '@/constants/theme';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { PriceCard } from '@/components/ui/PriceCard';
-import { FilterChip } from '@/components/ui/FilterChip';
+import { CategoryTabs } from '@/components/ui/CategoryTabs';
 import { EmptyState } from '@/components/ui/States';
 import { TODAY_PRICES } from '@/mock/prices';
+import {
+  LayoutGrid,
+  Sprout,
+  Wheat,
+  Flame,
+  Droplets,
+  Apple,
+  Search,
+} from 'lucide-react-native';
 
-const FILTERS = [
-  { id: 'all', label: 'All Crops' },
-  { id: 'vegetable', label: '🥦 Vegetables' },
-  { id: 'grain', label: '🌾 Grains' },
-  { id: 'spice', label: '🌶️ Spices' },
-  { id: 'oilseed', label: '🫘 Oilseeds' },
-  { id: 'fruit', label: '🍎 Fruits' },
+const CATEGORIES = [
+  { id: 'all', label: 'All Crops', icon: LayoutGrid },
+  { id: 'vegetable', label: 'Vegetables', icon: Sprout },
+  { id: 'grain', label: 'Grains', icon: Wheat },
+  { id: 'spice', label: 'Spices', icon: Flame },
+  { id: 'oilseed', label: 'Oilseeds', icon: Droplets },
+  { id: 'fruit', label: 'Fruits', icon: Apple },
 ];
 
 const CROP_CATEGORIES: Record<string, string> = {
@@ -68,26 +76,17 @@ export default function PricesScreen() {
         <SearchBar
           value={search}
           onChangeText={setSearch}
-          placeholder="Search crop..."
+          placeholder="Search crop or mandi..."
         />
       </View>
 
-      {/* Filters */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filtersScroll}
-        contentContainerStyle={styles.filtersContent}
-      >
-        {FILTERS.map(f => (
-          <FilterChip
-            key={f.id}
-            label={f.label}
-            selected={activeFilter === f.id}
-            onPress={() => setActiveFilter(f.id)}
-          />
-        ))}
-      </ScrollView>
+      {/* Category Tabs */}
+      <CategoryTabs
+        items={CATEGORIES}
+        selectedId={activeFilter}
+        onSelect={setActiveFilter}
+        style={styles.categoryTabs}
+      />
 
       {/* Price List */}
       <FlatList
@@ -97,9 +96,14 @@ export default function PricesScreen() {
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <EmptyState
-            icon="🔍"
+            icon={Search}
             title="No crops found"
-            subtitle="Try a different search term or filter"
+            subtitle="Try adjusting your search or category filter"
+            actionLabel={search || activeFilter !== 'all' ? 'Reset Filters' : undefined}
+            onAction={() => {
+              setSearch('');
+              setActiveFilter('all');
+            }}
           />
         }
         renderItem={({ item }) => (
@@ -142,15 +146,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     marginBottom: Spacing.sm,
   },
-  filtersScroll: {
-    flexGrow: 0,
-    marginBottom: Spacing.md,
-  },
-  filtersContent: {
-    paddingHorizontal: Spacing.base,
-    paddingVertical: 4,
-    gap: Spacing.sm,
-    alignItems: 'center',
+  categoryTabs: {
+    marginBottom: Spacing.sm,
   },
   listContent: {
     paddingHorizontal: Spacing.base,

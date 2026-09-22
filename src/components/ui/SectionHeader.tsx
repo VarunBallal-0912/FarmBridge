@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Typography, Spacing } from '@/constants/theme';
+import { ChevronRight } from 'lucide-react-native';
 
 interface SectionHeaderProps {
   title: string;
@@ -17,8 +18,14 @@ export function SectionHeader({ title, subtitle, actionLabel, onAction }: Sectio
         {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
       </View>
       {actionLabel && onAction && (
-        <TouchableOpacity onPress={onAction} activeOpacity={0.7}>
-          <Text style={styles.action}>{actionLabel} →</Text>
+        <TouchableOpacity
+          onPress={onAction}
+          style={styles.actionBtn}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+        >
+          <Text style={styles.action}>{actionLabel}</Text>
+          <ChevronRight size={14} color={Colors.primarySage} strokeWidth={2.5} />
         </TouchableOpacity>
       )}
     </View>
@@ -36,14 +43,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: Typography.lg,
-    fontWeight: Typography.bold,
+    fontSize: Typography.sectionHeading.fontSize,
+    fontWeight: Typography.sectionHeading.fontWeight,
     color: Colors.textPrimary,
+    letterSpacing: -0.2,
   },
   subtitle: {
-    fontSize: Typography.sm,
+    fontSize: Typography.secondary.fontSize,
     color: Colors.textSecondary,
     marginTop: 2,
+  },
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    paddingVertical: 4,
+    paddingLeft: Spacing.sm,
   },
   action: {
     fontSize: Typography.sm,

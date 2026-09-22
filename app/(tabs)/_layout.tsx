@@ -3,19 +3,20 @@ import { Tabs } from 'expo-router';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Shadow } from '@/constants/theme';
+import { Home, Store, Bot, User, type LucideIcon } from 'lucide-react-native';
 
 type CustomTabBarProps = Parameters<NonNullable<React.ComponentProps<typeof Tabs>['tabBar']>>[0];
 
 interface TabItemConfig {
-  emoji: string;
+  icon: LucideIcon;
   label: string;
 }
 
 const TAB_CONFIG: Record<string, TabItemConfig> = {
-  home: { emoji: '🏠', label: 'Home' },
-  prices: { emoji: '📊', label: 'Prices' },
-  ai: { emoji: '🤖', label: 'AI' },
-  you: { emoji: '👤', label: 'You' },
+  home: { icon: Home, label: 'Home' },
+  prices: { icon: Store, label: 'Prices' },
+  ai: { icon: Bot, label: 'Kisan AI' },
+  you: { icon: User, label: 'Profile' },
 };
 
 function CustomTabBar({ state, descriptors, navigation, insets }: CustomTabBarProps) {
@@ -32,7 +33,8 @@ function CustomTabBar({ state, descriptors, navigation, insets }: CustomTabBarPr
         {state.routes.map((route, index) => {
           const isFocused = state.index === index;
           const { options } = descriptors[route.key];
-          const config = TAB_CONFIG[route.name] ?? { emoji: '●', label: route.name };
+          const config = TAB_CONFIG[route.name] ?? { icon: Home, label: route.name };
+          const IconComponent = config.icon;
 
           const onPress = () => {
             const event = navigation.emit({
@@ -53,10 +55,13 @@ function CustomTabBar({ state, descriptors, navigation, insets }: CustomTabBarPr
             });
           };
 
+          const activeColor = Colors.primarySage;
+          const inactiveColor = Colors.textSecondary;
+
           return (
             <TouchableOpacity
               key={route.key}
-              accessibilityRole="button"
+              accessibilityRole="tab"
               accessibilityState={{ selected: isFocused }}
               accessibilityLabel={options.tabBarAccessibilityLabel ?? config.label}
               testID={options.tabBarButtonTestID}
@@ -66,7 +71,11 @@ function CustomTabBar({ state, descriptors, navigation, insets }: CustomTabBarPr
               activeOpacity={0.7}
             >
               <View style={[styles.tabItem, isFocused && styles.tabItemFocused]}>
-                <Text style={styles.tabEmoji}>{config.emoji}</Text>
+                <IconComponent
+                  size={20}
+                  color={isFocused ? activeColor : inactiveColor}
+                  strokeWidth={isFocused ? 2.4 : 1.8}
+                />
                 <Text
                   style={[styles.tabLabel, isFocused && styles.tabLabelFocused]}
                   numberOfLines={1}
@@ -144,22 +153,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
-    minWidth: 54,
+    minWidth: 58,
+    gap: 3,
   },
   tabItemFocused: {
     backgroundColor: Colors.primarySage + '18',
-  },
-  tabEmoji: {
-    fontSize: 22,
-    lineHeight: 26,
-    textAlign: 'center',
   },
   tabLabel: {
     fontSize: 11,
     fontWeight: Typography.medium,
     color: Colors.textSecondary,
     textAlign: 'center',
-    marginTop: 2,
     includeFontPadding: false,
   },
   tabLabelFocused: {

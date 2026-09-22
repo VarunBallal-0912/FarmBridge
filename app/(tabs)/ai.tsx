@@ -11,10 +11,11 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
+import { Colors, Typography, Spacing, Radius } from '@/constants/theme';
 import { AIMessage as AIMessageBubble } from '@/components/ui/AIMessage';
 import { SuggestionChip } from '@/components/ui/SuggestionChip';
 import { SUGGESTED_QUESTIONS, MOCK_RESPONSES, INITIAL_MESSAGES } from '@/mock/ai';
+import { Bot, Sparkles, ArrowUp } from 'lucide-react-native';
 
 interface Message {
   id: string;
@@ -74,13 +75,13 @@ export default function AIScreen() {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.aiAvatar}>
-            <Text style={styles.aiAvatarEmoji}>🌾</Text>
+            <Bot size={22} color={Colors.white} strokeWidth={2} />
           </View>
-          <View>
+          <View style={styles.headerText}>
             <Text style={styles.title}>Kisan AI</Text>
             <View style={styles.onlineRow}>
               <View style={styles.onlineDot} />
-              <Text style={styles.subtitle}>Your farming assistant</Text>
+              <Text style={styles.subtitle}>Instant Agricultural Advisory</Text>
             </View>
           </View>
         </View>
@@ -93,7 +94,12 @@ export default function AIScreen() {
           contentContainerStyle={styles.suggestionsContent}
         >
           {SUGGESTED_QUESTIONS.map(q => (
-            <SuggestionChip key={q} label={q} onPress={() => sendMessage(q)} />
+            <SuggestionChip
+              key={q}
+              label={q}
+              icon={Sparkles}
+              onPress={() => sendMessage(q)}
+            />
           ))}
         </ScrollView>
 
@@ -109,7 +115,7 @@ export default function AIScreen() {
             isTyping ? (
               <View style={styles.typingContainer}>
                 <View style={styles.typingBubble}>
-                  <Text style={styles.typingText}>Kisan AI is thinking...</Text>
+                  <Text style={styles.typingText}>Kisan AI is analyzing...</Text>
                 </View>
               </View>
             ) : null
@@ -134,8 +140,10 @@ export default function AIScreen() {
             onPress={() => sendMessage(input)}
             activeOpacity={0.8}
             disabled={!input.trim() || isTyping}
+            accessibilityRole="button"
+            accessibilityLabel="Send message"
           >
-            <Text style={styles.sendIcon}>↑</Text>
+            <ArrowUp size={20} color={Colors.white} strokeWidth={2.5} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -163,15 +171,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.screenBg,
   },
   aiAvatar: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    backgroundColor: Colors.lightGreen,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: Colors.primarySage,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  aiAvatarEmoji: {
-    fontSize: 24,
+  headerText: {
+    flex: 1,
   },
   title: {
     fontSize: Typography.lg,
@@ -217,6 +225,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
   typingText: {
     fontSize: Typography.sm,
@@ -255,10 +265,5 @@ const styles = StyleSheet.create({
   },
   sendBtnDisabled: {
     backgroundColor: Colors.border,
-  },
-  sendIcon: {
-    fontSize: 20,
-    color: Colors.white,
-    fontWeight: Typography.bold,
   },
 });

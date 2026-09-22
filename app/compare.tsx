@@ -6,7 +6,6 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  FlatList,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
@@ -15,6 +14,7 @@ import { MandiCard } from '@/components/ui/MandiCards';
 import { EmptyState } from '@/components/ui/States';
 import { CROPS } from '@/mock/crops';
 import { MANDI_COMPARISONS } from '@/mock/prices';
+import { BarChart3, Sparkles, ArrowRight } from 'lucide-react-native';
 
 export default function CompareScreen() {
   const params = useLocalSearchParams<{ cropId?: string; cropName?: string }>();
@@ -53,7 +53,7 @@ export default function CompareScreen() {
             {availableCrops.map(crop => (
               <FilterChip
                 key={crop.id}
-                label={`${crop.icon} ${crop.name}`}
+                label={crop.name}
                 selected={selectedCropId === crop.id}
                 onPress={() => setSelectedCropId(crop.id)}
               />
@@ -69,7 +69,7 @@ export default function CompareScreen() {
           </View>
 
           {sorted.length === 0 ? (
-            <EmptyState icon="📊" title="No comparison data" subtitle="Select a different crop" />
+            <EmptyState icon={BarChart3} title="No comparison data" subtitle="Select a different crop" />
           ) : (
             <>
               {/* Summary banner */}
@@ -93,9 +93,12 @@ export default function CompareScreen() {
                 </View>
               </View>
 
-              <Text style={styles.listNote}>
-                💡 Selling at {sorted[0]?.mandiName} could earn you ₹{priceDiff.toLocaleString('en-IN')}/qtl more
-              </Text>
+              <View style={styles.noteBanner}>
+                <Sparkles size={16} color={Colors.primarySage} strokeWidth={2} style={{ marginTop: 2 }} />
+                <Text style={styles.noteText}>
+                  Selling at {sorted[0]?.mandiName} could earn you ₹{priceDiff.toLocaleString('en-IN')}/qtl more
+                </Text>
+              </View>
 
               {/* Mandi list */}
               {sorted.map((item, index) => (
@@ -119,8 +122,9 @@ export default function CompareScreen() {
                 activeOpacity={0.8}
               >
                 <Text style={styles.detailsBtnText}>
-                  View {selectedCrop?.name} Price Details →
+                  View {selectedCrop?.name} Price Details
                 </Text>
+                <ArrowRight size={18} color={Colors.white} strokeWidth={2} />
               </TouchableOpacity>
             </>
           )}
@@ -181,6 +185,8 @@ const styles = StyleSheet.create({
     borderRadius: Radius.lg,
     padding: Spacing.base,
     flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
     marginBottom: Spacing.md,
   },
@@ -217,14 +223,21 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.borderLight,
     marginVertical: 4,
   },
-  listNote: {
-    fontSize: Typography.sm,
-    color: Colors.primarySage,
-    fontWeight: Typography.medium,
-    backgroundColor: Colors.lightGreen + '25',
-    padding: Spacing.sm + 2,
+  noteBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: Colors.primaryLight,
+    padding: Spacing.md,
     borderRadius: Radius.md,
     marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  noteText: {
+    flex: 1,
+    fontSize: Typography.sm,
+    color: Colors.textPrimary,
     lineHeight: 20,
   },
   detailsBtn: {
@@ -232,7 +245,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primarySage,
     borderRadius: Radius.lg,
     paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     ...Shadow.card,
   },
   detailsBtnText: {

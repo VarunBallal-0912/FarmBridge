@@ -5,14 +5,31 @@ import {
   FlatList,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
 } from 'react-native';
 import { Colors, Typography, Spacing } from '@/constants/theme';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { FilterChip } from '@/components/ui/FilterChip';
+import { CategoryTabs } from '@/components/ui/CategoryTabs';
 import { SchemeCard } from '@/components/ui/SchemeCard';
 import { EmptyState } from '@/components/ui/States';
-import { SCHEMES, SCHEME_CATEGORIES, getSchemesByCategory, type SchemeCategory } from '@/mock/schemes';
+import { SCHEMES, getSchemesByCategory, type SchemeCategory } from '@/mock/schemes';
+import {
+  LayoutGrid,
+  Banknote,
+  ShieldCheck,
+  Wrench,
+  Droplets,
+  Users,
+  Search,
+} from 'lucide-react-native';
+
+const SCHEME_TABS = [
+  { id: 'all', label: 'All Schemes', icon: LayoutGrid },
+  { id: 'financial', label: 'Financial', icon: Banknote },
+  { id: 'insurance', label: 'Insurance', icon: ShieldCheck },
+  { id: 'equipment', label: 'Equipment', icon: Wrench },
+  { id: 'irrigation', label: 'Irrigation', icon: Droplets },
+  { id: 'support', label: 'Support', icon: Users },
+];
 
 export default function SchemesScreen() {
   const [search, setSearch] = useState('');
@@ -34,7 +51,7 @@ export default function SchemesScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Government Schemes</Text>
-        <Text style={styles.subtitle}>Schemes available for Indian farmers</Text>
+        <Text style={styles.subtitle}>Subsidies, grants and support for Indian farmers</Text>
       </View>
 
       {/* Search */}
@@ -42,26 +59,17 @@ export default function SchemesScreen() {
         <SearchBar
           value={search}
           onChangeText={setSearch}
-          placeholder="Search schemes..."
+          placeholder="Search schemes, benefits, ministry..."
         />
       </View>
 
-      {/* Category filters */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filtersScroll}
-        contentContainerStyle={styles.filtersContent}
-      >
-        {SCHEME_CATEGORIES.map(cat => (
-          <FilterChip
-            key={cat.id}
-            label={`${cat.icon} ${cat.label}`}
-            selected={activeCategory === cat.id}
-            onPress={() => setActiveCategory(cat.id as SchemeCategory | 'all')}
-          />
-        ))}
-      </ScrollView>
+      {/* Category tabs */}
+      <CategoryTabs
+        items={SCHEME_TABS}
+        selectedId={activeCategory}
+        onSelect={(id) => setActiveCategory(id as SchemeCategory | 'all')}
+        style={styles.categoryTabs}
+      />
 
       {/* Scheme list */}
       <FlatList
@@ -71,14 +79,19 @@ export default function SchemesScreen() {
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
           <Text style={styles.resultCount}>
-            {filtered.length} scheme{filtered.length !== 1 ? 's' : ''} found
+            {filtered.length} scheme{filtered.length !== 1 ? 's' : ''} available
           </Text>
         }
         ListEmptyComponent={
           <EmptyState
-            icon="🔍"
+            icon={Search}
             title="No schemes found"
-            subtitle="Try a different search or category"
+            subtitle="Try a different search term or category"
+            actionLabel={search || activeCategory !== 'all' ? 'Reset Filters' : undefined}
+            onAction={() => {
+              setSearch('');
+              setActiveCategory('all');
+            }}
           />
         }
         renderItem={({ item }) => <SchemeCard scheme={item} />}
@@ -108,15 +121,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     marginBottom: Spacing.sm,
   },
-  filtersScroll: {
-    flexGrow: 0,
-    marginBottom: Spacing.md,
-  },
-  filtersContent: {
-    paddingHorizontal: Spacing.base,
-    paddingVertical: 4,
-    gap: Spacing.sm,
-    alignItems: 'center',
+  categoryTabs: {
+    marginBottom: Spacing.sm,
   },
   listContent: {
     paddingHorizontal: Spacing.base,

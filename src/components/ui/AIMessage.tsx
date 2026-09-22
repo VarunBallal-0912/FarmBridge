@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Typography, Spacing, Radius } from '@/constants/theme';
+import { Bot } from 'lucide-react-native';
 
 interface AIMessageProps {
   role: 'user' | 'assistant';
@@ -13,7 +14,7 @@ export function AIMessage({ role, text }: AIMessageProps) {
     <View style={[styles.container, isAssistant ? styles.assistantContainer : styles.userContainer]}>
       {isAssistant && (
         <View style={styles.avatar}>
-          <Text style={styles.avatarEmoji}>🌾</Text>
+          <Bot size={18} color={Colors.white} strokeWidth={2} />
         </View>
       )}
       <View style={[styles.bubble, isAssistant ? styles.assistantBubble : styles.userBubble]}>
@@ -41,17 +42,14 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: Colors.lightGreen,
+    backgroundColor: Colors.primarySage,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.sm,
     flexShrink: 0,
   },
-  avatarEmoji: {
-    fontSize: 18,
-  },
   bubble: {
-    maxWidth: '78%',
+    maxWidth: '82%',
     borderRadius: Radius.lg,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm + 2,
@@ -59,13 +57,15 @@ const styles = StyleSheet.create({
   assistantBubble: {
     backgroundColor: Colors.white,
     borderBottomLeftRadius: 4,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
   userBubble: {
     backgroundColor: Colors.primarySage,
     borderBottomRightRadius: 4,
   },
   text: {
-    fontSize: Typography.base,
+    fontSize: Typography.body.fontSize,
     lineHeight: 22,
   },
   assistantText: {

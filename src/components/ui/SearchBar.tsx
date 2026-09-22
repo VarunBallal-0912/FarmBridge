@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors, Radius, Spacing, Shadow } from '@/constants/theme';
+import { Search, X } from 'lucide-react-native';
 
 interface SearchBarProps {
   value: string;
@@ -10,23 +11,38 @@ interface SearchBarProps {
   onBlur?: () => void;
 }
 
-export function SearchBar({ value, onChangeText, placeholder = 'Search...', onFocus, onBlur }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChangeText,
+  placeholder = 'Search...',
+  onFocus,
+  onBlur,
+}: SearchBarProps) {
   return (
     <View style={styles.container}>
-      <View style={styles.iconContainer}>
-        <View style={styles.searchIcon} />
-      </View>
+      <Search size={18} color={Colors.textSecondary} strokeWidth={2} style={styles.icon} />
       <TextInput
         style={styles.input}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={Colors.textSecondary}
+        placeholderTextColor={Colors.textMuted}
         onFocus={onFocus}
         onBlur={onBlur}
         returnKeyType="search"
-        clearButtonMode="while-editing"
+        autoCapitalize="none"
+        autoCorrect={false}
       />
+      {value.length > 0 && (
+        <TouchableOpacity
+          onPress={() => onChangeText('')}
+          style={styles.clearBtn}
+          accessibilityLabel="Clear search"
+          activeOpacity={0.7}
+        >
+          <X size={16} color={Colors.textMuted} strokeWidth={2} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -38,25 +54,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm + 2,
+    height: 44,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
   },
-  iconContainer: {
+  icon: {
     marginRight: Spacing.sm,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  searchIcon: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 2,
-    borderColor: Colors.textSecondary,
   },
   input: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 14,
     color: Colors.textPrimary,
     paddingVertical: 0,
+    height: '100%',
+  },
+  clearBtn: {
+    padding: Spacing.xs,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

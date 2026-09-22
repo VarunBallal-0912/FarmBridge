@@ -6,10 +6,19 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  Image,
 } from 'react-native';
+import { router } from 'expo-router';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
 import { DiseaseResultCard, DiseaseResult } from '@/components/ui/DiseaseResultCard';
+import {
+  Camera,
+  ImagePlus,
+  Search,
+  CheckCircle2,
+  Info,
+  Bot,
+  ArrowRight,
+} from 'lucide-react-native';
 
 const MOCK_RESULT: DiseaseResult = {
   diseaseName: 'Leaf Blight',
@@ -85,31 +94,37 @@ export default function DiseaseScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Header */}
         <View style={styles.headerBlock}>
-          <Text style={styles.subtitle}>Upload a crop image to identify possible diseases.</Text>
+          <Text style={styles.subtitle}>Upload a crop image to identify possible diseases and treatments.</Text>
         </View>
 
         {/* Upload Area */}
         <View style={[styles.uploadArea, hasImage && styles.uploadAreaFilled]}>
           {!hasImage ? (
             <>
-              <Text style={styles.uploadEmoji}>📷</Text>
+              <View style={styles.uploadIconWrap}>
+                <Camera size={34} color={Colors.primarySage} strokeWidth={1.8} />
+              </View>
               <Text style={styles.uploadTitle}>Upload Crop Image</Text>
               <Text style={styles.uploadHint}>Take a clear photo of affected leaves or plant</Text>
             </>
           ) : isAnalyzing ? (
             <>
-              <Text style={styles.uploadEmoji}>🔍</Text>
-              <Text style={styles.uploadTitle}>Analysing image...</Text>
-              <Text style={styles.uploadHint}>AI is detecting possible diseases</Text>
+              <View style={styles.uploadIconWrap}>
+                <Search size={34} color={Colors.primarySage} strokeWidth={1.8} />
+              </View>
+              <Text style={styles.uploadTitle}>Analyzing image...</Text>
+              <Text style={styles.uploadHint}>AI is detecting crop pathogen symptoms</Text>
               <View style={styles.progressBar}>
                 <View style={styles.progressFill} />
               </View>
             </>
           ) : (
             <>
-              <Text style={styles.uploadEmoji}>✅</Text>
+              <View style={[styles.uploadIconWrap, { backgroundColor: Colors.priceUpBg }]}>
+                <CheckCircle2 size={34} color={Colors.priceUp} strokeWidth={1.8} />
+              </View>
               <Text style={styles.uploadTitle}>Analysis Complete</Text>
-              <Text style={styles.uploadHint}>See results below</Text>
+              <Text style={styles.uploadHint}>Review diagnosis and recommended treatments below</Text>
             </>
           )}
         </View>
@@ -121,7 +136,7 @@ export default function DiseaseScreen() {
             onPress={simulateImageSelection}
             activeOpacity={0.8}
           >
-            <Text style={styles.photoBtnIcon}>📷</Text>
+            <Camera size={18} color={Colors.white} strokeWidth={2} />
             <Text style={styles.photoBtnText}>Take Photo</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -129,18 +144,21 @@ export default function DiseaseScreen() {
             onPress={simulateAnotherImage}
             activeOpacity={0.8}
           >
-            <Text style={styles.photoBtnIcon}>🖼️</Text>
+            <ImagePlus size={18} color={Colors.primarySage} strokeWidth={2} />
             <Text style={[styles.photoBtnText, { color: Colors.primarySage }]}>Upload Image</Text>
           </TouchableOpacity>
         </View>
 
         {/* Tips */}
         <View style={styles.tipsCard}>
-          <Text style={styles.tipsTitle}>📌 Tips for best results</Text>
-          <Text style={styles.tipItem}>• Take photo in good daylight</Text>
-          <Text style={styles.tipItem}>• Focus on the affected leaf / stem</Text>
-          <Text style={styles.tipItem}>• Keep the image clear and in focus</Text>
-          <Text style={styles.tipItem}>• Include both healthy and sick parts if possible</Text>
+          <View style={styles.tipsTitleRow}>
+            <Info size={16} color={Colors.primarySage} strokeWidth={2} />
+            <Text style={styles.tipsTitle}>Tips for best results</Text>
+          </View>
+          <Text style={styles.tipItem}>• Take photo in clear daylight or bright lighting</Text>
+          <Text style={styles.tipItem}>• Focus closely on the affected leaf or stem lesions</Text>
+          <Text style={styles.tipItem}>• Ensure the camera is sharp and steady</Text>
+          <Text style={styles.tipItem}>• Capture both healthy and damaged tissue if possible</Text>
         </View>
 
         {/* Result */}
@@ -148,8 +166,14 @@ export default function DiseaseScreen() {
           <View style={styles.resultSection}>
             <Text style={styles.resultSectionTitle}>Detection Result</Text>
             <DiseaseResultCard result={result} />
-            <TouchableOpacity style={styles.kisanAiBtn} activeOpacity={0.8}>
-              <Text style={styles.kisanAiBtnText}>🤖 Ask Kisan AI for more advice →</Text>
+            <TouchableOpacity
+              style={styles.kisanAiBtn}
+              onPress={() => router.push('/ai')}
+              activeOpacity={0.8}
+            >
+              <Bot size={18} color={Colors.primarySage} strokeWidth={2} />
+              <Text style={styles.kisanAiBtnText}>Ask Kisan AI for treatment guidance</Text>
+              <ArrowRight size={16} color={Colors.primarySage} strokeWidth={2} />
             </TouchableOpacity>
           </View>
         )}
@@ -186,7 +210,17 @@ const styles = StyleSheet.create({
     borderColor: Colors.lightGreen,
     backgroundColor: Colors.lightGreen + '10',
   },
-  uploadEmoji: { fontSize: 52, marginBottom: Spacing.md },
+  uploadIconWrap: {
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: Colors.surfaceMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
   uploadTitle: {
     fontSize: Typography.lg,
     fontWeight: Typography.semibold,
@@ -237,23 +271,29 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: Colors.primarySage,
   },
-  photoBtnIcon: { fontSize: 20 },
   photoBtnText: {
     fontSize: Typography.base,
     fontWeight: Typography.semibold,
     color: Colors.white,
   },
   tipsCard: {
-    backgroundColor: Colors.warmBeige + '60',
+    backgroundColor: Colors.warmBeige + '40',
     borderRadius: Radius.lg,
     padding: Spacing.base,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     marginBottom: Spacing.lg,
+  },
+  tipsTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: Spacing.sm,
   },
   tipsTitle: {
     fontSize: Typography.base,
     fontWeight: Typography.semibold,
     color: Colors.textPrimary,
-    marginBottom: Spacing.sm,
   },
   tipItem: {
     fontSize: Typography.sm,
@@ -272,9 +312,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Radius.lg,
     paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.base,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     borderWidth: 1.5,
     borderColor: Colors.primarySage,
+    ...Shadow.card,
   },
   kisanAiBtnText: {
     fontSize: Typography.base,

@@ -12,7 +12,15 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { Colors, Typography, Spacing, Radius, Shadow } from '@/constants/theme';
 import { StatCard } from '@/components/ui/StatCard';
 import { MandiCard } from '@/components/ui/MandiCards';
+import { CropBadge } from '@/components/ui/CropBadge';
 import { TODAY_PRICES, CROP_TRENDS, MANDI_COMPARISONS, formatPrice } from '@/mock/prices';
+import {
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  BarChart3,
+  ArrowRight,
+} from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 const CHART_WIDTH = width - Spacing.base * 2 - 32;
@@ -101,7 +109,7 @@ export default function CropDetailsScreen() {
         {/* Hero price section */}
         <View style={styles.heroCard}>
           <View style={styles.heroTop}>
-            <Text style={styles.heroIcon}>{priceRecord.cropIcon}</Text>
+            <CropBadge cropId={priceRecord.cropId} size="large" />
             <View style={styles.heroInfo}>
               <Text style={styles.heroName}>{priceRecord.cropName}</Text>
               <Text style={styles.heroMandi}>{priceRecord.mandiName}</Text>
@@ -118,6 +126,9 @@ export default function CropDetailsScreen() {
                 },
               ]}
             >
+              {changeIsUp && <TrendingUp size={14} color={Colors.priceUp} strokeWidth={2.5} />}
+              {changeIsDown && <TrendingDown size={14} color={Colors.priceDown} strokeWidth={2.5} />}
+              {!changeIsUp && !changeIsDown && <Minus size={14} color={Colors.textSecondary} strokeWidth={2.5} />}
               <Text
                 style={[
                   styles.changeBadgeText,
@@ -130,7 +141,6 @@ export default function CropDetailsScreen() {
                   },
                 ]}
               >
-                {changeIsUp ? '↑' : changeIsDown ? '↓' : '—'}{' '}
                 {Math.abs(priceRecord.changePercent).toFixed(1)}%
               </Text>
             </View>
@@ -144,11 +154,11 @@ export default function CropDetailsScreen() {
 
         {/* Stat cards */}
         <View style={styles.statsRow}>
-          <StatCard label="Min Price" value={formatPrice(priceRecord.minPrice)} icon="📉" />
+          <StatCard label="Min Price" value={formatPrice(priceRecord.minPrice)} icon={TrendingDown} />
           <View style={{ width: Spacing.sm }} />
-          <StatCard label="Today's Price" value={formatPrice(priceRecord.currentPrice)} icon="📊" highlight />
+          <StatCard label="Today's Price" value={formatPrice(priceRecord.currentPrice)} icon={BarChart3} highlight />
           <View style={{ width: Spacing.sm }} />
-          <StatCard label="Max Price" value={formatPrice(priceRecord.maxPrice)} icon="📈" />
+          <StatCard label="Max Price" value={formatPrice(priceRecord.maxPrice)} icon={TrendingUp} />
         </View>
         <View style={[styles.statsRow, { marginTop: Spacing.sm }]}>
           <StatCard label="Average" value={formatPrice(avgPrice)} />
@@ -205,7 +215,8 @@ export default function CropDetailsScreen() {
               }
               activeOpacity={0.8}
             >
-              <Text style={styles.compareAllText}>Full Mandi Comparison →</Text>
+              <Text style={styles.compareAllText}>Full Mandi Comparison</Text>
+              <ArrowRight size={16} color={Colors.primarySage} strokeWidth={2} />
             </TouchableOpacity>
           </View>
         )}
@@ -269,6 +280,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Radius.xl,
     padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
     marginBottom: Spacing.md,
   },
@@ -278,7 +291,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     gap: 12,
   },
-  heroIcon: { fontSize: 40 },
   heroInfo: { flex: 1 },
   heroName: {
     fontSize: Typography.xl,
@@ -291,7 +303,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   changeBadge: {
-    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: Radius.pill,
   },
@@ -368,12 +383,17 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.white,
     borderRadius: Radius.lg,
     padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
     ...Shadow.card,
   },
   compareAllBtn: {
     marginTop: Spacing.md,
     paddingVertical: Spacing.md,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
     backgroundColor: Colors.white,
     borderRadius: Radius.lg,
     borderWidth: 1.5,
