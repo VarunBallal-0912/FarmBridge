@@ -1,16 +1,14 @@
+// Legacy template component — stubbed for Farmbridge
 import { View, type ViewProps } from 'react-native';
+import { Colors } from '@/constants/theme';
 
-import { ThemeColor } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+export type ThemeColor = 'textPrimary' | 'textSecondary';
 
 export type ThemedViewProps = ViewProps & {
-  lightColor?: string;
-  darkColor?: string;
-  type?: ThemeColor;
+  type?: 'background' | 'backgroundElement';
+  themeColor?: ThemeColor;
 };
 
-export function ThemedView({ style, lightColor, darkColor, type, ...otherProps }: ThemedViewProps) {
-  const theme = useTheme();
-
-  return <View style={[{ backgroundColor: theme[type ?? 'background'] }, style]} {...otherProps} />;
+export function ThemedView({ style, ...rest }: ThemedViewProps) {
+  return <View style={[{ backgroundColor: Colors.screenBg }, style]} {...rest} />;
 }
